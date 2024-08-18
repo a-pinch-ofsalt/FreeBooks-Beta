@@ -1,8 +1,0 @@
- * Running on http://127.0.0.1:5000
-Press CTRL+C to quit
- * Restarting with stat
- * Debugger is active!
- * Debugger PIN: 131-051-866
-127.0.0.1 - - [18/Aug/2024 12:19:55] "OPTIONS /pirate_book HTTP/1.1" 200 -
-An error occurred: 'ellipsis' object has no attribute 'authorize'
-127.0.0.1 - - [18/Aug/2024 12:20:01] "POST /pirate_book HTTP/1.1" 200 -
