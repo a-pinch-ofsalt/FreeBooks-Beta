@@ -5,7 +5,7 @@ document.getElementById('bookForm').addEventListener('submit', function(event) {
     const bookTitle = document.getElementById('bookTitle').value;
     const authorLastName = document.getElementById('authorLastName').value;
 
-    fetch('/pirate_book', {
+    fetch('http://localhost:5000/pirate_book', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

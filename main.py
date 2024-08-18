@@ -1,13 +1,11 @@
-
-import requests
-from flask import Flask, jsonify, redirect, url_for
+from flask import Flask, jsonify, request, redirect, url_for
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import os
 
-from libgenScraper import search_libgen, download_epub  # Importing from libgenScraper
-from driveUploader import upload_book_to_google_drive  # Importing from the new driveUploader module
+from libgenScraper import search_libgen, download_epub
+from driveUploader import upload_book_to_google_drive
 
 app = Flask(__name__)
 
@@ -35,12 +33,14 @@ def callback():
     credentials = flow.credentials
     service = build('drive', 'v3', credentials=credentials)
     
-    # Placeholder for file upload logic after login
-    # This should be triggered after user logs in and a file is selected for upload
     return 'Logged in successfully. Ready to upload.'
 
 @app.route('/pirate_book', methods=['POST'])
-def pirate_book(title, authorLastName):
+def pirate_book():
+    data = request.get_json()  # Extract data from request body
+    title = data.get('title')
+    authorLastName = data.get('authorLastName')
+    
     download_link = search_libgen(title, authorLastName)
     if download_link:
         file_path = download_epub(download_link)
