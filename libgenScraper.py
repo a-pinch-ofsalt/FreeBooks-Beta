@@ -1,6 +1,8 @@
+
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import os
 
 def search_libgen(title, author):
     search_url = "https://libgen.li/index.php"
@@ -57,5 +59,17 @@ def get_download_link_from_mirror(mirror_url):
     
     if download_link:
         return download_link
+    else:
+        return None
+
+def download_epub(download_link):
+    response = requests.get(download_link, stream=True)
+    if response.status_code == 200:
+        file_name = download_link.split('/')[-1]
+        file_path = os.path.join(os.getcwd(), file_name)
+        with open(file_path, 'wb') as file:
+            for chunk in response.iter_content(chunk_size=128):
+                file.write(chunk)
+        return file_path
     else:
         return None
