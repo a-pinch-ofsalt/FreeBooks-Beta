@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, redirect, url_for
+from flask_cors import CORS
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -8,6 +9,7 @@ from libgenScraper import search_libgen, download_epub
 from driveUploader import upload_book_to_google_drive
 
 app = Flask(__name__)
+CORS(app)
 
 CLIENT_SECRETS_FILE = 'google-api-keys/client_secret.json'
 
@@ -37,7 +39,7 @@ def callback():
 
 @app.route('/pirate_book', methods=['POST'])
 def pirate_book():
-    data = request.get_json()  # Extract data from request body
+    data = request.get_json()
     title = data.get('title')
     authorLastName = data.get('authorLastName')
     
