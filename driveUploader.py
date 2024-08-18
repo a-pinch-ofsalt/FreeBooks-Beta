@@ -1,10 +1,9 @@
-
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-def upload_book_to_google_drive(file_path):
+def upload_book_to_google_drive(file_path, credentials):
     try:
-        credentials = ...  # Obtain credentials
+        # Use the credentials passed as an argument
         service = build('drive', 'v3', credentials=credentials)
 
         file_metadata = {'name': file_path.split('/')[-1]}
