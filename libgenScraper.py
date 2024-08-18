@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import os
 
+
 def search_libgen(title, author):
     search_url = "https://libgen.li/index.php"
     params = {
@@ -62,8 +63,9 @@ def get_download_link_from_mirror(mirror_url):
     else:
         return None
 
-def download_epub(download_link):
-    response = requests.get(download_link, stream=True)
+def download_epub(title, author_last_name):
+    download_link = search_libgen(title, author_last_name)
+    response = requests.get(download_link)
     if response.status_code == 200:
         file_name = download_link.split('/')[-1]
         file_path = os.path.join(os.getcwd(), file_name)
@@ -73,3 +75,5 @@ def download_epub(download_link):
         return file_path
     else:
         return None
+    
+print(download_epub('ready player one', 'cline'))
