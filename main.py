@@ -104,7 +104,9 @@ def pirate_book():
         if (epub_filepath == 504):
             print("Servers are down right now.")
             return "Servers are down right now."
+        print(f"epub_filepath = {epub_filepath}")
         upload_book_to_google_drive(epub_filepath, credentials)
+        return "Success!"
         
     
 if __name__ == '__main__':

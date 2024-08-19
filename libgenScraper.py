@@ -37,6 +37,7 @@ def search_libgen(title, author):
                 mirror_url = urljoin(search_url, first_mirror_link)  # Convert to absolute URL
                 download_link = get_download_link_from_mirror(mirror_url)
                 if download_link:
+                    print(f"download_link: {download_link}")
                     return download_link
 
     return None
@@ -63,16 +64,17 @@ def get_download_link_from_mirror(mirror_url):
         return None
 
 def download_epub(title, author_last_name):
+    file_path = os.path.join('downloads', f'{title.strip()}.epub')
     download_link = search_libgen(title, author_last_name)
-    if (download_link == 504):
-        return 504
-    response = requests.get(download_link, stream=True)
-    if response.status_code == 200:
-        file_name = download_link.split('/')[-1]
-        file_path = os.path.join(os.getcwd(), file_name)
-        with open(file_path, 'wb') as file:
-            for chunk in response.iter_content(chunk_size=128):
-                file.write(chunk)
-        return file_path
-    else:
+    if download_link == None:
+        print("No download link found!")
         return None
+    else:
+        if download_link == 504:
+            print("The servers are down!")
+            return 504
+        else:
+            with requests.get(download_link, allow_redirects=True) as response:
+                with open(file_path, 'wb') as file:
+                    file.write(response.content)
+            return file_path
