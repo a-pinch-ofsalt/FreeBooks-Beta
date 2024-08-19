@@ -6,6 +6,7 @@ from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from libgenScraper import download_epub
+from driveUploader import upload_book_to_google_drive
 import os
 from google.oauth2.credentials import Credentials
 from flask_session import Session
@@ -40,6 +41,11 @@ def authorize():
 def oauth2callback():
     # Get the authorization code from Google
     auth_code = request.args.get('code')
+    
+    
+    # If there's no authorization code, something went wrong
+    if not auth_code:
+        return "Missing authorization code. Please try the sign-in process again."
 
     # Exchange the authorization code for an access token
     token_url = 'https://oauth2.googleapis.com/token'
@@ -105,8 +111,21 @@ def pirate_book():
     book_title = data.get('title')
     author_last_name = data.get('authorLastName')
     credentials = data.get('credentials')
-    print(f"BOIS WE DID IT. book_title book_title= {book_title}, author_last_name = {author_last_name}, credentials = {credentials}.")
-    return 'lmao'
+    
+    epub_filepath = download_epub(book_title, author_last_name)
+    if (epub_filepath == None):
+        print("File was not found.")
+        return "File was not found"
+    else:
+        if (epub_filepath == 504):
+            print("Servers are down right now.")
+            return "Servers are down right now."
+        upload_book_to_google_drive(epub_filepath, credentials)
+        
+    
+        
+    
+    
 
 """
 

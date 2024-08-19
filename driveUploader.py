@@ -3,6 +3,7 @@ from googleapiclient.http import MediaFileUpload
 
 def upload_book_to_google_drive(file_path, credentials):
     try:
+        print("HELLOOOOOOOOOOO")
         # Use the credentials passed as an argument
         service = build('drive', 'v3', credentials=credentials)
 
