@@ -1,19 +1,42 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Fetch the book data from the server-side session
-    fetch('https://localhost:5000/get_book_info', {
-        method: 'GET',
-        credentials: 'include'
+document.getElementById('submit').addEventListener('click', function(event) {
+    event.preventDefault();  // Prevent the default form submission
+    // Get the book title and author last name from the form fields
+    const bookTitle = document.getElementById('bookTitle').value;
+    const authorLastName = document.getElementById('authorLastName').textContent;
+
+    // Assuming the token_info is stored as a data attribute or retrieved from a session
+    const credentials = document.getElementById('access').textContent;
+    alert(`token_info = ${credentials}`)
+
+    // Prepare the data to be sent in the request
+    const requestData = {
+        title: bookTitle,
+        authorLastName: authorLastName,
+        credentials: credentials
+    };
+
+    // Send the data to the server
+    fetch('https://localhost:5000/pirate_book', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+        credentials: 'include'  // Ensure cookies are included in the request
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.bookTitle && data.authorLastName) {
-                document.getElementById('pirateStatus').innerText = `Downloading "${data.bookTitle}" by ${data.authorLastName}...`;
-            } else {
-                document.getElementById('pirateStatus').innerText = 'No book information available!';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching book info:', error);
-            document.getElementById('pirateStatus').innerText = 'An error occurred!';
-        });
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to upload the book');
+        }
+    })
+    .then(data => {
+        // Handle success (data contains the server response)
+        console.log('Book uploaded successfully:', data);
+    })
+    .catch(error => {
+        // Handle errors
+        console.error('Error:', error);
+    });
 });

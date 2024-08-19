@@ -9,33 +9,20 @@ from libgenScraper import download_epub
 import os
 from google.oauth2.credentials import Credentials
 from flask_session import Session
+import requests
+from google.oauth2.credentials import Credentials
+
+
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 CLIENT_SECRETS_FILE = "client_secret.json"
-app.secret_key = "1234"
+app.secret_key = os.urandom(64)
 
-# Configure the session to use filesystem
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_FILE_DIR'] = './flask_session/'  # Directory to store session files
-
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # or 'None' if needed for cross-origin
-app.config['SESSION_COOKIE_SECURE'] = False    # Set to True if using HTTPS
-
-@app.route('/store_book_info', methods=['POST'])
-def store_book_info():
-    print("help")
-    data = request.json
-    session['book_title'] = data.get('title')
-    session['author_last_name'] = data.get('authorLastName')
-    
-    print(f"Stored in session: {session['book_title']} by {session['author_last_name']}")
-    
-    return jsonify({'message': 'Book info stored successfully'})
-
-@app.route('/authorize')
+@app.route('/signin', methods=['GET'])
 def authorize():
+    print('hola!')
 
     flow = Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE,
@@ -47,12 +34,55 @@ def authorize():
         include_granted_scopes='true'
     )
     session['state'] = state
-
-    # Redirect to Google's OAuth consent page
     return redirect(authorization_url)
 
+@app.route('/oauth2callback')
+def oauth2callback():
+    # Get the authorization code from Google
+    auth_code = request.args.get('code')
 
+    # Exchange the authorization code for an access token
+    token_url = 'https://oauth2.googleapis.com/token'
+    token_data = {
+        'code': auth_code,
+        'client_id': '1005985003754-tge3gduo7qd6rtveknhajeehor8u012p.apps.googleusercontent.com',
+        'client_secret': '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',
+        'redirect_uri': url_for('oauth2callback', _external=True),
+        'grant_type': 'authorization_code'
+    }
+    token_response = requests.post(token_url, data=token_data)
+    token_info = token_response.json()
 
+    if 'error' in token_info:
+        return f"An error occurred: {token_info['error_description']}"
+
+    # Convert the token_info into a Credentials object
+    credentials = Credentials(
+        token=token_info['access_token'],
+        refresh_token=token_info.get('refresh_token'),
+        token_uri='https://oauth2.googleapis.com/token',
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        scopes=['https://www.googleapis.com/auth/drive.file']
+    )
+
+    # Store the credentials in the session for later use
+    session['credentials'] = credentials_to_dict(credentials)
+
+    # Redirect the user to the book selection page
+    return render_template('pirate.html', credentials=credentials_to_dict(credentials))
+
+def credentials_to_dict(credentials):
+    """Helper function to serialize credentials into a dictionary."""
+    return {
+        'token': credentials.token,
+        'refresh_token': credentials.refresh_token,
+        'token_uri': credentials.token_uri,
+        'client_id': credentials.client_id,
+        'client_secret': credentials.client_secret,
+        'scopes': credentials.scopes
+    }
+"""
 @app.route('/oauth2callback')
 def oauth2callback():
     flow = Flow.from_client_secrets_file(
@@ -64,10 +94,21 @@ def oauth2callback():
     flow.fetch_token(authorization_response=request.url)
 
     credentials = flow.credentials
-    session['credentials'] = credentials_to_dict(credentials)
 
     # Redirect to the new pirating page
-    return render_template('pirating.html')
+    return render_template('pirate.html')
+"""
+@app.route('/pirate_book', methods=['GET', 'POST'])
+def pirate_book():
+    print("YES")
+    data = request.json
+    book_title = data.get('title')
+    author_last_name = data.get('authorLastName')
+    credentials = data.get('credentials')
+    print(f"BOIS WE DID IT. book_title book_title= {book_title}, author_last_name = {author_last_name}, credentials = {credentials}.")
+    return 'lmao'
+
+"""
 
 @app.route('/get_book_info', methods=['GET'])
 def get_book_info():
@@ -149,7 +190,39 @@ def credentials_from_dict(data):
         client_secret=data.get('client_secret'),
         scopes=data.get('scopes')
     )
-
+"""
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, ssl_context=('cert.pem', 'key.pem'))
+    
+
+
+
+
+"""@app.route('/book_selection')
+def book_selection():
+    # Render the book selection page
+    return render_template('pirate.html')
+
+@app.route('/upload_book', methods=['POST'])
+def upload_book():
+    # Get book info from the form
+    book_title = request.form.get('bookTitle')
+    author_last_name = request.form.get('authorLastName')
+    
+    # Get the credentials from the session
+    credentials = session.get('credentials')
+    
+    if not credentials:
+        return jsonify({"error": "No credentials found. Please sign in again."}), 401
+    
+    # Download the book using the provided title and author
+    file_path = download_epub(book_title, author_last_name)
+    
+    # Upload the book to Google Drive using the credentials and the file path
+    success = upload_book_to_google_drive(credentials, file_path)
+    
+    if success:
+        return "Book uploaded successfully!"
+    else:
+        return "Failed to upload the book.", 500"""
