@@ -64,6 +64,8 @@ def get_download_link_from_mirror(mirror_url):
 
 def download_epub(title, author_last_name):
     download_link = search_libgen(title, author_last_name)
+    if (download_link == 504):
+        return 504
     response = requests.get(download_link, stream=True)
     if response.status_code == 200:
         file_name = download_link.split('/')[-1]
