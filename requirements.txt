@@ -3,3 +3,7 @@ beautifulsoup4
 requests
 flask-cors
 Flask-Session
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client

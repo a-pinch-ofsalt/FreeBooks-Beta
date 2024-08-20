@@ -1,18 +1,11 @@
-from flask import Flask, request, redirect, url_for, session, jsonify, render_template, send_file
+from flask import Flask, request, redirect, url_for, session, render_template
 from flask_cors import CORS
-from flask_cors import cross_origin
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
 from libgenScraper import download_epub
 from driveUploader import upload_book_to_google_drive
 import os
 from google.oauth2.credentials import Credentials
-from flask_session import Session
-import requests
-from google.oauth2.credentials import Credentials
-
 
 
 app = Flask(__name__)
