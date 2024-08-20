@@ -105,6 +105,7 @@ def pirate_book():
             print("Servers are down right now.")
             return "Servers are down right now."
         print(f"epub_filepath = {epub_filepath}")
+        credentials = Credentials(**session['credentials'])
         upload_book_to_google_drive(epub_filepath, credentials)
         return "Success!"
         
