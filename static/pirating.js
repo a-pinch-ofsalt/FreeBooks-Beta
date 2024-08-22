@@ -16,7 +16,7 @@ document.getElementById('submit').addEventListener('click', function(event) {
     };
 
     // Send the data to the server
-    fetch('http://localhost:8001/pirate_book', {
+    fetch('https://freebooks-b7fl.onrender.com/pirate_book', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -24,8 +24,10 @@ document.getElementById('submit').addEventListener('click', function(event) {
         body: JSON.stringify(requestData),
         credentials: 'include'  // Ensure cookies are included in the request
     })
+    .then(response => response.json())
     .then(response => {
         if (response.ok) {
+            console.log('Success:', data);
             return response.json();
         } else {
             throw new Error('Failed to upload the book');

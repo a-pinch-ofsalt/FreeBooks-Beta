@@ -17,5 +17,5 @@ document.getElementById('bookForm').addEventListener('click', function(event) {
     })
 */
     // Redirect the browser to the Flask route that initiates the OAuth flow
-    window.location.href = 'http://localhost:8001/signin';
+    window.location.href = 'https://freebooks-b7fl.onrender.com/signin';
 });
