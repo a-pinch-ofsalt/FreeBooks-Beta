@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, session, render_template
+from flask import Flask, request, redirect, url_for, session, render_template, jsonify
 from flask_cors import CORS
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
@@ -9,12 +9,20 @@ from google.oauth2.credentials import Credentials
 
 
 app = Flask(__name__)
+app.secret_key = os.urandom(64)
+port = int(os.environ.get('PORT', 5000))
+
 CORS(app, supports_credentials=True)
+
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 CLIENT_SECRETS_FILE = "client_secret.json"
-app.secret_key = os.urandom(64)
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+@app.route('/test', methods=['POST'])
+def test():
+    print("This is a test.")
+    return jsonify({'status': 'success', 'message': 'beep boop. I am a computer!'})
 
 
 @app.route('/signin', methods=['GET'])
@@ -104,4 +112,4 @@ def pirate_book():
         
     
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=('cert.pem', 'key.pem'))
+    app.run(host='0.0.0.0', port=port)

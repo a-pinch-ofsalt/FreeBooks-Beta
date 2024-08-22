@@ -16,7 +16,7 @@ document.getElementById('submit').addEventListener('click', function(event) {
     };
 
     // Send the data to the server
-    fetch('https://localhost:5000/pirate_book', {
+    fetch('http://localhost:8001/pirate_book', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
