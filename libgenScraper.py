@@ -21,12 +21,14 @@ def search_libgen(title, author):
     if response.status_code != 200:
         if response.status_code == 504:
             return 504
+        print(f"The response status code was not 200, but the servers aren't down either! Here's the actual response we got: {response.status_code}.")
         return None
 
     soup = BeautifulSoup(response.content, 'html.parser')
     table = soup.find('table', {'id': 'tablelibgen'})
 
     if not table:
+        print("No table was found!")
         return None
 
     for row in table.find_all('tr')[1:]:
@@ -39,13 +41,15 @@ def search_libgen(title, author):
                 if download_link:
                     print(f"download_link: {download_link}")
                     return download_link
-
+    
+    print("There were no epubs on the table!")
     return None
 
 def get_download_link_from_mirror(mirror_url):
     response = requests.get(mirror_url)
     
     if response.status_code != 200:
+        
         return None
 
     soup = BeautifulSoup(response.content, 'html.parser')
