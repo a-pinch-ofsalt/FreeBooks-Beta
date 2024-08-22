@@ -100,15 +100,15 @@ def pirate_book():
     epub_filepath = download_epub(book_title, author_last_name)
     if (epub_filepath == None):
         print("File was not found.")
-        return "File was not found"
+        return jsonify({'status': 'error', 'message': 'We couldn\t find the file on libgen!'})
     else:
         if (epub_filepath == 504):
             print("Servers are down right now.")
-            return "Servers are down right now."
+            return jsonify({'status': 'error', 'message': 'The libgen servers are down right now!'})
         print(f"epub_filepath = {epub_filepath}")
         credentials = Credentials(**session['credentials'])
         upload_book_to_google_drive(epub_filepath, credentials)
-        return "Success!"
+        return jsonify({'status': 'success', 'message': 'We downloded the book successfully!'})
         
     
 if __name__ == '__main__':
