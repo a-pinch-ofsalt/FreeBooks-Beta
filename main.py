@@ -46,11 +46,7 @@ def oauth2callback():
     # Recreate the flow object
     print(f"Request URL: {request.url}")
     print(f"Request arguments: {request.args}")
-    print(f"Session state: {session.get('state')}")
-    
-    if 'code' not in request.args:
-        return "Missing authorization code. Please try the sign-in process again."
-    
+    print(f"Session state: {session.get('state')}")   
     
     flow = Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE,
