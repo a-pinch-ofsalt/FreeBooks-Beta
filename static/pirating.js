@@ -16,7 +16,7 @@ document.getElementById('submit').addEventListener('click', function(event) {
     };
 
     // Send the data to the server
-    fetch('https://freebooks-b7fl.onrender.com/pirate_book', {
+    fetch('https://freebooks-beta.vercel.app/pirate_book', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
