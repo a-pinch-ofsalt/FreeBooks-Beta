@@ -16,8 +16,9 @@ def search_libgen(title, author):
         'sortmode': 'DESC'
     }
     test_response = requests.get(search_url)
-    
-    
+
+    test_google_response = requests.get('https://www.google.com/')
+    print(f"Fetching google.com got response {test_google_response.status_code}.")
 
     response = requests.get(search_url, params=params)
     
@@ -25,7 +26,6 @@ def search_libgen(title, author):
         if response.status_code == 504:
             return 504
         print(f"The response status code was not 200, but the servers aren't down either! Here's the actual response we got: {response.status_code}.")
-        print(f"The test response (only trying to access the main page) got response {test_response.status_code}.")
         return None
 
     soup = BeautifulSoup(response.content, 'html.parser')
